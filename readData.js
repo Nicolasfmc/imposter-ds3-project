@@ -43,7 +43,7 @@ function mostraVetor(){
 
 function orderData(json) {
     const newJson = json.sort((a, b) => a.log - b.log);
-    return console.log(newJson[0]);
+    return console.log(newJson[999999]);
 }
 
 // Finaliza o processo ao terminar a leitura
