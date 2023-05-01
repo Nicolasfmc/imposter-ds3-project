@@ -2,11 +2,12 @@ const fs = require('fs');
 const { performance } = require('perf_hooks');
 const { parser } = require('stream-json');
 const { streamArray } = require('stream-json/streamers/StreamArray');
-const { stdin, stdout } = require('node:process');
+//const { stdin, stdout } = require('node:process');
 const readline = require('readline');
 var inputData = [];
+var indexImposter = 0;
 
-const rl = readline.createInterface({ input: stdin, output: stdout });
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
 // Função para processar cada objeto JSON lido do arquivo, colocando-o em um vetor
 async function processJsonObject(jsonObj) {
@@ -38,56 +39,65 @@ jsonStream.on('error', (error) => {
   console.error(`Erro ao analisar o JSON: ${error.message}`);
 });
 
+function getImpostorIndex(){
+  return new Promise((resolve) => {
+    rl.question('Index do impostor: ', (answer) => {
+      rl.close();
+      resolve(answer);
+    });
+  });
+}
 // desenvolvimento de ordernação
-
 // perguntar ao usuario o mes e o index do impostor
-// order p/mes dps order p/log e mostrar o index que foi enviado pelo usuario
-async function orderData(json) {
-  // for i = 1 to k do
-  // C[i] = C[i]+C[i−1]; {C[i] é número de j’s tais que A[j] ≤ i}
-  // end for
-  // for i = n decrescendo até 1 do
-  // B[C[A[j]]] = A[j];
-  // C[A[j]] = C[A[j]] − 1;
-  // end for
-  const arr = [];
 
-  for (let i = 0; i < 1000000; i++) {
-    arr[i].push(0);
-
-    return;
-  }
-
-  for (let j = 0; j < json.length; j++) {
-    arr[json[i]] = arr[json[i]] + 1;
-
-    return;
-  }
-
-  for (let idx = 0; idx < 1000000; idx++) {
-    arr[idx] = arr[idx] + arr[idx - 1];
-     return;
-  }
-
-  for (let index = 0; json.length < 1; index--) {
-    const b = [];
-    b[arr[json[index]]] = json[index];
-    arr[json[index]] = arr[json[index]] - 1;
+function radixSort(arr) {
+  // Define uma função para encontrar o maior número do array.
+  const getMax = () => {
+    let max = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] > max) {
+        max = arr[i];
+      }
+    }
+    return max;
+  };
+  
+  // Inicializa a variável exp com 1.
+  let exp = 1;
+  // Enquanto a divisão de max por exp for maior que 0, executa o algoritmo de classificação radix.
+  while (Math.floor(getMax() / exp) > 0) {
+    // Cria 10 baldes para armazenar os elementos do array de acordo com o dígito correspondente.
+    let buckets = Array.from({ length: 10 }, () => []);
     
-    return b;
+    // Separa cada elemento do array em dígitos e armazena-os em seus baldes correspondentes.
+    for (let i = 0; i < arr.length; i++) {
+      let digit = Math.floor(arr[i] / exp) % 10;
+      buckets[digit].push(arr[i]);
+    }
+    
+    // Reconstrói o array a partir dos baldes.
+    arr = [].concat(...buckets);
+    // Multiplica exp por 10 para classificar os elementos de acordo com o próximo dígito.
+    exp *= 10;
   }
+  
+  // Retorna o array ordenado.
+  return console.log(arr[indexImposter]);
 }
 
+
 // Finaliza o processo ao terminar a leitura
-jsonStream.on('end', () => {
+jsonStream.on('end', async () => {
   console.log('Leitura do arquivo concluída.');
+  indexImposter = await getImpostorIndex();
   const start = performance.now();
   
   //daqui deve partir o desenvolvimento, pois antes não garante que o arquivo está lido
-  orderData(inputData);
+  radixSort(inputData);
   
   const end = performance.now()
   
-  console.log('tempo de execucao:', ((end - start).toFixed(3)).substring(2) + 'ms');
+  console.log('tempo de execucao:', ((end - start).toFixed(0)) + 'ms');
+
   return;
 });
