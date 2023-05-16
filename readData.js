@@ -47,6 +47,16 @@ function getImpostorIndex(){
     });
   });
 }
+
+function getMonthNumber(){
+  return new Promise((resolve) => {
+    rl.question('Número do mês de sabotagem: ', (answer) => {
+      rl.close();
+      resolve(answer);
+    });
+  });
+}
+
 // Desenvolvimento de ordernação
 function counting(arr, monthNumber) {
   const monthCounts = new Array(12).fill(0);
@@ -66,16 +76,41 @@ function counting(arr, monthNumber) {
   const monthName = getMonthIndex(monthNumber);
   const filteredArr = sortedArr.filter((item) => item.month === monthName);
 
-  return radix(filteredArr);
+  radix(filteredArr);
+  
+  return; 
 }
 
 
 function getMonthIndex(month) {
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-  return monthNames.indexOf(month);
+  switch (month){
+    case 1:
+      return 'January';
+    case 2:
+      return 'February';
+    case 3:
+      return 'March';
+    case 4:
+      return 'April';
+    case 5:
+      return 'May';
+    case 6:
+      return 'June';
+    case 7:
+      return 'July';
+    case 8:
+      return 'August';
+    case 9:
+      return 'September';
+    case 10:
+      return 'October';
+    case 11:
+      return 'November';
+    case 12:
+      return 'December';
+    default: 
+      return '';
+  }
 }
 
 
@@ -122,7 +157,7 @@ jsonStream.on('end', async () => {
   const start = performance.now();
   
   //daqui deve partir o desenvolvimento, pois antes não garante que o arquivo está lido
-  counting(inputData, );
+  counting(inputData, monthImposter);
   
   const end = performance.now()
   
